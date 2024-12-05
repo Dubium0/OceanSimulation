@@ -15,5 +15,7 @@ namespace ProceduralMeshes
         int JobLength { get; }
 
         Bounds Bounds { get; }
+
+        int Resolution { get; set; }
     }
 }
