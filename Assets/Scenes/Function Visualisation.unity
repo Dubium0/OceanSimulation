@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d091e2311062670408f93c8b2d60a86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 50
+  resolution: 255
   meshType: 1
 --- !u!1 &1545630099
 GameObject:
