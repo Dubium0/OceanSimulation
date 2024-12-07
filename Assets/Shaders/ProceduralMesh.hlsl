@@ -67,9 +67,8 @@ void WaveFunction_float(
     
    
     //direction.y = 0;
-    DirectionFunctionValues directionFunctionValues = LenghtXZDirectionFunction(position, origin);
+    DirectionFunctionValues directionFunctionValues = SumDirectionFunction(position, origin);
     
-
 
     float frequency = 2.0 / wavelenght;
     float phase = speed * frequency;

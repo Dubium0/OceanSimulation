@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc5cda520ff3b7b49b0dc1f9fdacef72, type: 3}
   m_Name: Ocean Material Data
   m_EditorClassIdentifier: 
-  Amplitude: 0.09
-  Wavelength: 0.16
-  Speed: 1
-  Origin: {x: 0, y: 0, z: 0}
-  BaseColor: {r: 0, g: 1, b: 0.99020815, a: 0}
-  SpecularColor: {r: 1, g: 1, b: 1, a: 0}
-  AmbientColor: {r: 0, g: 0.7169812, b: 0.70973736, a: 0}
-  AmbientStrenght: 0
-  SpecularPower: 117.7
+  waves:
+  - WaveCount: 9
+    WaveType: 1
+    Amplitude: 0.009
+    AmplitudeMultiplier: 0.8
+    Wavelength: 1
+    WavelengthMultiplier: 0.88
+    Speed: 1
+    Direction: {x: 1, y: 1}
+    SteepnessPower: 250
+    PeekValue: -2.75
+  BaseColor: {r: 0, g: 1, b: 0.992157, a: 0}
+  SpecularColor: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+  AmbientColor: {r: 0.27612138, g: 0.3932675, b: 0.6886792, a: 0}
+  AmbientStrenght: 0.16
+  SpecularPower: 233.7
