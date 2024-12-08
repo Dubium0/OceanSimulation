@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3410825427081184079
+--- !u!114 &-6774844818415162516
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,13 +20,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaveMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: 5fce7e33b11e664419bedc75263df601, type: 3}
+  m_Name: Ocean
+  m_Shader: {fileID: 4800000, guid: ac80a890a44ed804ea4da1624ee47d60, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ENABLE
-  - _WAVE_MODE_DEFAULT
+  - ENABLE_WAVES
+  - WAVE_MODE_SINE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -40,7 +40,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 612551dff7419e0429d404f2380457ed, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -71,19 +71,11 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: a7e69ec294471bd42a24bfc085b65e3f, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SkyBox:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -108,9 +100,6 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Ambient_Strength: 0
-    - _Amplitude: 0.01
-    - _Amplitude_Multiplier: 0.8
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -122,56 +111,27 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _ENABLE: 1
-    - _ENABLE_NOISE: 0
-    - _ENABLE_RIPPLE: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Highlight_Offset: 0
-    - _Light_Intensity: 1
     - _Metallic: 0
-    - _Noise_Scale: 5.12
-    - _Noise_Strength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
-    - _Peek_Value: 0
-    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Refractive_Index: 0
-    - _Ripple_Amplitude: 0.1
-    - _Ripple_Period: 3
-    - _Ripple_Speed: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Specular_Power: 1.3
-    - _Specular_power: 11.99
-    - _Speed: 0.16
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Steepness_Power: 1
     - _Surface: 0
-    - _WAVE_MODE: 0
-    - _Wave_Count: 1
-    - _Wavelength: 0.05
-    - _Wavelength_Multiplier: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _Ambient_Light: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Base_color: {r: 0, g: 0.6036333, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Direction: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Highlight: {r: 0, g: 0, b: 0, a: 0}
-    - _Light_Direction: {r: 0, g: 0, b: 0, a: 0}
-    - _Origin: {r: 0, g: 0.25, b: 0, a: 0}
-    - _Ripple_Origin: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Specular_Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

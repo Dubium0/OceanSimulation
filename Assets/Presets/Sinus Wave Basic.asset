@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed743d988a1b10c43a3ea55c22e2ebfc, type: 3}
+  m_Name: Sinus Wave Basic
+  m_EditorClassIdentifier: 
+  CurrentWaveType: 0
+  OctaveCount: 100
+  Amplitude: 0.45
+  AmplitudeMultiplier: 0.742
+  WaveLength: 2.18
+  FrequencyMultiplier: 1.13
+  Speed: 1
+  RandomDirectionSeed: 26.2

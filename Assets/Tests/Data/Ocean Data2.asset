@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc5cda520ff3b7b49b0dc1f9fdacef72, type: 3}
+  m_Name: Ocean Data2
+  m_EditorClassIdentifier: 
+  Waves:
+  - WaveType: 0
+    Influence: 1
+    OctaveCount: 33
+    Amplitude: 0.1
+    AmplitudeMultiplier: 0.8
+    Wavelength: 24.9
+    FrequencyMultiplier: 1.2
+    Speed: 1.66
+    RandomDirectionSeed: 5.67
+    SteepnessPower: 1
+  - WaveType: 1
+    Influence: 0.09
+    OctaveCount: 30
+    Amplitude: 0.1
+    AmplitudeMultiplier: 0.47
+    Wavelength: 1.18
+    FrequencyMultiplier: 1.2
+    Speed: 1
+    RandomDirectionSeed: 4.28
+    SteepnessPower: 108
+  - WaveType: 2
+    Influence: 0
+    OctaveCount: 36
+    Amplitude: 0.1
+    AmplitudeMultiplier: 0.561
+    Wavelength: 3.06
+    FrequencyMultiplier: 1.08
+    Speed: 1
+    RandomDirectionSeed: 4.9
+    SteepnessPower: 4
+  - WaveType: 3
+    Influence: 0
+    OctaveCount: 30
+    Amplitude: 0.1
+    AmplitudeMultiplier: 0.8
+    Wavelength: 3.01
+    FrequencyMultiplier: 1.15
+    Speed: 1
+    RandomDirectionSeed: 1
+    SteepnessPower: -1
+  BaseColor: {r: 0, g: 0.63358074, b: 0.9254902, a: 1}
+  SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+  AmbientColor: {r: 0.023529423, g: 0.4077023, b: 0.5647059, a: 1}
+  AmbientStrenght: 0.1
+  Shininess: 161.7

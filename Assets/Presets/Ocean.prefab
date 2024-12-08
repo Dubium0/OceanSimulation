@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1935103396276907871
+--- !u!1 &2463100831961020848
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 780337488482046569}
-  - component: {fileID: 8755061491690484786}
-  - component: {fileID: 9120849213011617385}
-  - component: {fileID: 1719603093329293066}
-  - component: {fileID: 7844453715357428939}
+  - component: {fileID: 2240149939663524457}
+  - component: {fileID: 194092493193722631}
+  - component: {fileID: 3871080100479998099}
+  - component: {fileID: 6953023478984621192}
+  - component: {fileID: 11613367730878429}
+  - component: {fileID: 4512991015259778527}
   m_Layer: 0
-  m_Name: Wave Test
+  m_Name: Ocean
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &780337488482046569
+--- !u!4 &2240149939663524457
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935103396276907871}
+  m_GameObject: {fileID: 2463100831961020848}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.1924574, y: 2.231615, z: -2.4175234}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8755061491690484786
+--- !u!33 &194092493193722631
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935103396276907871}
+  m_GameObject: {fileID: 2463100831961020848}
   m_Mesh: {fileID: 0}
---- !u!23 &9120849213011617385
+--- !u!23 &3871080100479998099
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935103396276907871}
+  m_GameObject: {fileID: 2463100831961020848}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -66,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 56024ce072537ce4daa115c11919ac2f, type: 2}
+  - {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -88,33 +89,47 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1719603093329293066
+--- !u!114 &6953023478984621192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935103396276907871}
+  m_GameObject: {fileID: 2463100831961020848}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d091e2311062670408f93c8b2d60a86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 255
+  resolution: 200
   meshType: 1
---- !u!114 &7844453715357428939
+--- !u!114 &11613367730878429
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935103396276907871}
+  m_GameObject: {fileID: 2463100831961020848}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82962a78a81403846a05c9fa04aa3ba7, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c1014fe7f95d6949afb5a927a315ef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaterialData: {fileID: 11400000, guid: e88a6121032162445865fc0ba7cff813, type: 2}
-  EnableWave: 1
-  SceneCamera: {fileID: 0}
-  LightSource: {fileID: 0}
+  GridTilePrefab: {fileID: 2463100831961020848, guid: aebec4aad4b2f7941bef6ba361abaa6a, type: 3}
+  DimensionX: 1
+  DimensionZ: 1
+--- !u!114 &4512991015259778527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2463100831961020848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd8dca3150e7f34dad8439e7f570765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OceanMaterial: {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
+  WavePreset: {fileID: 11400000, guid: 771fc3d81433b1e4d89707f9de22aa43, type: 2}
+  EnableWave: 0

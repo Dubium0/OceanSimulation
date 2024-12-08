@@ -1,4 +1,4 @@
-Shader "Custom/OceanShader"
+Shader "Custom/OceanShaderLegacy"
 {
     Properties
     {
@@ -27,12 +27,12 @@ Shader "Custom/OceanShader"
             // make fog work
             #pragma multi_compile_fog
 
+            #pragma shader_feature ENABLE_WAVES
             #include "UnityCG.cginc"
             #include "UnityPBSLighting.cginc"
             #include "AutoLight.cginc"
 
             // Properties
-            
             
             #define WAVE_DEFAULT 0
             #define WAVE_SINUSODIAL 1
@@ -97,8 +97,8 @@ Shader "Custom/OceanShader"
             {
                 float2 dir = float2(1, 1);
 
-                dir.x = 2.0 * Random(float2(waveIndex, directionSeed)) - 1.0;
-                dir.y = 2.0 * Random(float2(waveIndex, directionSeed + 1)) - 1.0;
+                dir.x =  Random(float2(waveIndex, directionSeed)) ;
+                dir.y =  Random(float2(waveIndex, directionSeed + 1)) ;
 
                 return normalize(dir);
             }
@@ -145,7 +145,7 @@ Shader "Custom/OceanShader"
                 position.x += previousDerivatives.x;
                 position.z += previousDerivatives.y;
     
-                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, 20));
+                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, directionSeed));
     
                 float phase = sqrt(speed * frequency);
     
@@ -175,7 +175,7 @@ Shader "Custom/OceanShader"
                 position.x += previousDerivatives.x;
                 position.z += previousDerivatives.y;
     
-                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, 20));
+                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, directionSeed));
     
                 float phase = sqrt(speed * frequency);
     
@@ -204,7 +204,7 @@ Shader "Custom/OceanShader"
                 position.x += previousDerivatives.x;
                 position.z += previousDerivatives.y;
     
-                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, 20));
+                DirectionFunctionValues directionFunctionValues = DirectionFunction(position, GetRandomDirection(waveIndex, directionSeed));
     
                 float phase = sqrt(speed * frequency);
     
@@ -319,32 +319,42 @@ Shader "Custom/OceanShader"
             {
                 FragmentData output;
 
-                WaveFunctionResult result;
-               
-                
+                #define ENABLE_WAVES
+                #ifdef ENABLE_WAVES
+                float3 wPosition =  mul(unity_ObjectToWorld, v.position).xyz;
 
-                float3 position =  v.position;
+                WaveFunctionResult result ;//= BrownianWaveGenerator(wPosition,_Waves[0]);
+               
+                result.derivative0 = 0.0;
+                result.derivatives  =float2(0,0);
+
+              
                 for (int i = 0; i < _WaveBufferSize; i++)
                 {
-                    WaveFunctionResult intermidiateResult;
-
+      
                     Wave wave = _Waves[i];
+                
+                    WaveFunctionResult intermidiateResult = BrownianWaveGenerator( wPosition, wave);
+                  
 
-                    intermidiateResult = BrownianWaveGenerator(position, wave);
                     intermidiateResult.derivative0 *= wave.influence;
                     intermidiateResult.derivatives *= wave.influence;
-        
+                    
+                
                     result.derivative0 += intermidiateResult.derivative0;
                     result.derivatives += intermidiateResult.derivatives;
+                    wPosition.x += result.derivatives.x * wave.influence ;
+                    wPosition.z += result.derivatives.y* wave.influence;
 
-                    position.x += result.derivatives.x;
-                    position.z += result.derivatives.y;
+                
                 }
 
-                v.position = v.position + float4(0, result.derivative0, 0,0);
-                output.fragPos = UnityObjectToClipPos(v.position);
+                v.position+= float4(0, result.derivative0, 0,0);
+                v.normal = float3(-result.derivatives.x,1.0,-result.derivatives.y);
+                #endif
+                output.fragPos = UnityObjectToClipPos(v.position );
                 output.worldPos =  mul(unity_ObjectToWorld, v.position).xyz;
-                output.worldNormal = normalize( UnityObjectToWorldNormal(v.normal));
+                output.worldNormal = normalize( UnityObjectToWorldNormal( v.normal));
                 
 
 
@@ -354,8 +364,7 @@ Shader "Custom/OceanShader"
 
             fixed4 frag (FragmentData i) : SV_Target
             {
-               
-      
+
                 float3 lightDir = _WorldSpaceLightPos0;
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
                 float3 halfwayDir = normalize(lightDir + viewDir);
@@ -375,8 +384,8 @@ Shader "Custom/OceanShader"
                 fixed4 color = fixed4(diffuse + specularColor +  ambientColor ,1.0);
                 
                 // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, color);
-                return color;
+                UNITY_APPLY_FOG(i.fragPos, color);
+                return fixed4(color);
             }
             ENDCG
         }

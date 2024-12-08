@@ -35,8 +35,8 @@ public class OceanMaterialController : MonoBehaviour
         if (material_ == null) { Debug.LogError("No material attached to Renderer!"); return; } 
 
         Debug.Log("Updating Material Data....");
-        if (EnableWave) { material_.EnableKeyword("_ENABLE"); }
-        else { material_.DisableKeyword("_ENABLE"); };
+       if (EnableWave) { material_.EnableKeyword("_ENABLE"); }
+       else { material_.DisableKeyword("_ENABLE"); };
 
         if(MaterialData != null)
         {
@@ -44,7 +44,7 @@ public class OceanMaterialController : MonoBehaviour
             material_.DisableKeyword("_WAVE_MODE_SINUSODIAL");
             material_.DisableKeyword("_WAVE_MODE_STEEP_SINUSODIAL");
             material_.DisableKeyword("_WAVE_MODE_NICE_PEEK"); 
-            switch (MaterialData.waves[0].WaveType)
+            switch (MaterialData.Waves[0].WaveType)
             {
                 
                 case WaveTypes.Default:
@@ -64,24 +64,24 @@ public class OceanMaterialController : MonoBehaviour
             }
 
 
-            material_.SetFloat("_Wave_Count", MaterialData.waves[0].OctaveCount);
-            material_.SetFloat("_Amplitude", MaterialData.waves[0].Amplitude);
+            material_.SetFloat("_Wave_Count", MaterialData.Waves[0].OctaveCount);
+            material_.SetFloat("_Amplitude", MaterialData.Waves[0].Amplitude);
             
-            material_.SetFloat("_Amplitude_Multiplier", MaterialData.waves[0].AmplitudeMultiplier);
-            material_.SetFloat("_Wavelength", MaterialData.waves[0].Wavelength);
+            material_.SetFloat("_Amplitude_Multiplier", MaterialData.Waves[0].AmplitudeMultiplier);
+            material_.SetFloat("_Wavelength", MaterialData.Waves[0].Wavelength);
             
-            material_.SetFloat("_Wavelength_Multiplier", MaterialData.waves[0].FrequencyMultiplier);
-            material_.SetFloat("_Speed", MaterialData.waves[0].Speed);
+            material_.SetFloat("_Wavelength_Multiplier", MaterialData.Waves[0].FrequencyMultiplier);
+            material_.SetFloat("_Speed", MaterialData.Waves[0].Speed);
 
        
-            material_.SetFloat("_Direction", MaterialData.waves[0].RandomDirectionSeed);
-            material_.SetFloat("_Steepness_Power", MaterialData.waves[0].SteepnessPower);
-            material_.SetFloat("_Peek_Value", MaterialData.waves[0].SteepnessPower);
+            material_.SetFloat("_Direction", MaterialData.Waves[0].RandomDirectionSeed);
+            material_.SetFloat("_Steepness_Power", MaterialData.Waves[0].SteepnessPower);
+            material_.SetFloat("_Peek_Value", MaterialData.Waves[0].SteepnessPower);
 
 
             material_.SetColor("_Base_Color",MaterialData.BaseColor);
             material_.SetColor("_Specular_Color", MaterialData.SpecularColor);
-            material_.SetFloat("_Specular_Power", MaterialData.SpecularPower);
+            material_.SetFloat("_Specular_Power", MaterialData.Shininess);
             material_.SetColor("_Ambient_Light", MaterialData.AmbientColor);
             material_.SetFloat("_Ambient_Strength", MaterialData.AmbientStrenght);
             

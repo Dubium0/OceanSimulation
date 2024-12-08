@@ -8,7 +8,7 @@ public class OceanMaterialData : ScriptableObject
 
 
     [Header("Wave Settings")]
-    public List<Wave> waves = new List<Wave>();
+    public Wave[] Waves =new Wave[4];
     
 
     [Header("Material Settings")]
@@ -16,15 +16,16 @@ public class OceanMaterialData : ScriptableObject
     public Color SpecularColor;
     public Color AmbientColor;
     public float AmbientStrenght;
-    public float SpecularPower;
+    public float Shininess;
 
  
     public delegate void OnMaterialChangeFunction();
     public OnMaterialChangeFunction OnMaterialChange;
 
     private void OnValidate()
-    { 
-        if(OnMaterialChange != null)OnMaterialChange();
+    {
+        
+        if (OnMaterialChange != null)OnMaterialChange();
     }
 
 

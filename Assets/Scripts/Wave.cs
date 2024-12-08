@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine;
 public enum WaveTypes
 {
     Default = 0,
@@ -9,8 +11,6 @@ public enum WaveTypes
 [System.Serializable]
 public struct Wave
 {
-  
-
     [Header("Wave Settings")]
     public WaveTypes WaveType;
     public float Influence;
@@ -23,10 +23,63 @@ public struct Wave
     public float FrequencyMultiplier;
     public float Speed;
     public float RandomDirectionSeed;
-    [Min(1)]
+
     public int SteepnessPower;
+};
+
+public struct GPUWave
+{
+    public int WaveType;
+    public float Influence;
+    public int OctaveCount;
+    public float Amplitude;
+    public float AmplitudeMultiplier;
+    public float Wavelength;
+    public float FrequencyMultiplier;
+    public float Speed;
+    public float RandomDirectionSeed;
+    public int SteepnessPower;
+}
+
+public static class WaveToGPUReadable {
+
+    public static int GetGPUWaveSize()
+    {
+
+        return 10;
+    }
+    public static GPUWave Convert(Wave wave)
+    {
+
+        GPUWave gPUWave = new GPUWave();
+
+        gPUWave.WaveType = (int)wave.WaveType;
+        gPUWave.Influence = wave.Influence;
+
+        gPUWave.OctaveCount = wave.OctaveCount;
+        gPUWave.Amplitude = wave.Amplitude;
+        gPUWave.AmplitudeMultiplier = wave.AmplitudeMultiplier;
+        gPUWave.Wavelength = wave.Wavelength;
+        gPUWave.FrequencyMultiplier = wave.FrequencyMultiplier;
+        gPUWave.Speed = wave.Speed;
+        gPUWave.RandomDirectionSeed = wave.RandomDirectionSeed;
+        gPUWave.SteepnessPower = wave.SteepnessPower;
+        return gPUWave;
+    }
+
+    public static GPUWave[] ConvertArray(Wave[] waves) {
+
+        GPUWave[] result = new GPUWave[waves.Length];
+
+        for (int i = 0; i < waves.Length; i++) {
+            result[i]   = Convert(waves[i]);
+        }
+        return result;
+    } 
 
 }
+
+
 /*
   int waveType;
   float influence;
