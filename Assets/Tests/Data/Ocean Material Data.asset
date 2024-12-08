@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Ocean Material Data
   m_EditorClassIdentifier: 
   waves:
-  - WaveCount: 9
-    WaveType: 1
-    Amplitude: 0.009
-    AmplitudeMultiplier: 0.8
+  - WaveCount: 100
+    WaveType: 3
+    Amplitude: 0.01
+    AmplitudeMultiplier: 0.59
     Wavelength: 1
-    WavelengthMultiplier: 0.88
+    WavelengthMultiplier: 0.9
     Speed: 1
     Direction: {x: 1, y: 1}
-    SteepnessPower: 250
-    PeekValue: -2.75
+    SteepnessPower: 5
+    PeekValue: -1
   BaseColor: {r: 0, g: 1, b: 0.992157, a: 0}
-  SpecularColor: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+  SpecularColor: {r: 1, g: 1, b: 1, a: 0}
   AmbientColor: {r: 0.27612138, g: 0.3932675, b: 0.6886792, a: 0}
   AmbientStrenght: 0.16
-  SpecularPower: 233.7
+  SpecularPower: 233.6

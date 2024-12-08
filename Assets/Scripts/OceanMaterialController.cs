@@ -27,7 +27,7 @@ public class OceanMaterialController : MonoBehaviour
         if (MaterialData != null) { MaterialData.OnMaterialChange = UpdateMaterialData; }
         UpdateMaterialData();
     }
-    
+
     private void UpdateMaterialData()
     {
         var renderer = GetComponent<Renderer>();
@@ -64,19 +64,19 @@ public class OceanMaterialController : MonoBehaviour
             }
 
 
-            material_.SetFloat("_Wave_Count", MaterialData.waves[0].WaveCount);
+            material_.SetFloat("_Wave_Count", MaterialData.waves[0].OctaveCount);
             material_.SetFloat("_Amplitude", MaterialData.waves[0].Amplitude);
             
             material_.SetFloat("_Amplitude_Multiplier", MaterialData.waves[0].AmplitudeMultiplier);
             material_.SetFloat("_Wavelength", MaterialData.waves[0].Wavelength);
             
-            material_.SetFloat("_Wavelength_Multiplier", MaterialData.waves[0].WavelengthMultiplier);
+            material_.SetFloat("_Wavelength_Multiplier", MaterialData.waves[0].FrequencyMultiplier);
             material_.SetFloat("_Speed", MaterialData.waves[0].Speed);
 
        
-            material_.SetVector("_Direction", MaterialData.waves[0].Direction.normalized);
+            material_.SetFloat("_Direction", MaterialData.waves[0].RandomDirectionSeed);
             material_.SetFloat("_Steepness_Power", MaterialData.waves[0].SteepnessPower);
-            material_.SetFloat("_Peek_Value", MaterialData.waves[0].PeekValue);
+            material_.SetFloat("_Peek_Value", MaterialData.waves[0].SteepnessPower);
 
 
             material_.SetColor("_Base_Color",MaterialData.BaseColor);
@@ -85,7 +85,7 @@ public class OceanMaterialController : MonoBehaviour
             material_.SetColor("_Ambient_Light", MaterialData.AmbientColor);
             material_.SetFloat("_Ambient_Strength", MaterialData.AmbientStrenght);
             
-
+            
             if (LightSource != null) { 
                 material_.SetFloat("_Light_Intensity", LightSource.intensity);
                 material_.SetVector("_Light_Direction", LightSource.transform.forward);

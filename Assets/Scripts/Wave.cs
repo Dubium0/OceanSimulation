@@ -9,20 +9,34 @@ public enum WaveTypes
 [System.Serializable]
 public struct Wave
 {
+  
 
     [Header("Wave Settings")]
-    [Range(1, 100)]
-    public int WaveCount;
     public WaveTypes WaveType;
+    public float Influence;
+    [Range(1, 100)]
+    public int OctaveCount;
     public float Amplitude;
     [Range(0.0f, 1.0f)]
     public float AmplitudeMultiplier;
     public float Wavelength;
-    public float WavelengthMultiplier;
+    public float FrequencyMultiplier;
     public float Speed;
-    public Vector2 Direction;
+    public float RandomDirectionSeed;
     [Min(1)]
     public int SteepnessPower;
-    public float PeekValue;
 
 }
+/*
+  int waveType;
+  float influence;
+  int octaveCount;
+  float amplitude;
+  float amplitudeMultiplier;
+  float waveLength;
+  float frequencyMultiplier;
+  float speed;
+  float randomDirectionSeed;
+  int steepnessPower;
+
+   */

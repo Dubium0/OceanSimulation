@@ -9,9 +9,10 @@ public class MultipleGrid : MonoBehaviour
 
    
 
-    [Min(1)]
-    public int Dimensions = 1;
-
+    [Range(1,20)]
+    public int DimensionX = 1;
+    [Range(1, 20)]
+    public int DimensionZ= 1;
     private bool awakeCheck = false;
 
     private void OnValidate()
@@ -58,11 +59,11 @@ public class MultipleGrid : MonoBehaviour
     private void CreateGrid()
     {   
         
-        for (int x = 0; x < Dimensions; x++)
+        for (int x = 0; x < DimensionX; x++)
         {
-            for (int y = 0; y < Dimensions; y++)
+            for (int y = 0; y < DimensionZ; y++)
             {
-                Instantiate(GridTilePrefab,new Vector3(x, 0, y), Quaternion.identity,transform);
+                Instantiate(GridTilePrefab,new Vector3(x, 0, y) * transform.localScale.x, Quaternion.identity,transform);
 
             }
         }

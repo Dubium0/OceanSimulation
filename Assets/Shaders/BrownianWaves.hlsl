@@ -4,7 +4,7 @@
 
 #define EulerNumber 2.71666666667
 
-
+//0-1
 float Random(float2 seed)
 {
     return frac(sin(dot(seed.xy, float2(12.9898, 78.233))) * 43758.5453123);
@@ -14,8 +14,8 @@ float2 GetRandomDirection(int waveIndex, float directionSeed)
 {
     float2 dir = float2(1,1);
 
-    dir.x = 2.0 * Random(float2(waveIndex, directionSeed)) - 1.0;
-    dir.y = 2.0 * Random(float2(waveIndex, directionSeed + 1)) - 1.0;
+    dir.x = 2.0 * Random(float2(waveIndex, 0.96)) - 1.0;
+    dir.y = 2.0 * Random(float2(waveIndex, 0.96 + 1)) - 1.0;
 
     return normalize(dir);
 }
@@ -62,8 +62,6 @@ WaveFunctionResult SinusoidalWave(
 {
     WaveFunctionResult results;
     
-    position.x += previousDerivatives.x;
-    position.z += previousDerivatives.y;
     float2 randomDirection = GetRandomDirection(waveIndex, 20);
     DirectionFunctionValues directionFunctionValues = DirectionFunction(position, randomDirection);
     
@@ -73,7 +71,7 @@ WaveFunctionResult SinusoidalWave(
     float phase = speed * frequency;
     
     
-    float subFunction = (directionFunctionValues.derivative0 + randomDirection) * frequency + _Time.y * phase;
+    float subFunction = (directionFunctionValues.derivative0 + previousDerivatives.x + previousDerivatives.y) * frequency + _Time.y * phase;
     
     results.derivative0 = amplitude * sin(subFunction);
     
@@ -84,6 +82,7 @@ WaveFunctionResult SinusoidalWave(
 }
 
 WaveFunctionResult SteeperSinusoidalWave(
+    int waveIndex,
     float2 previousDerivatives,
     float3 position,
     float2 direction,
@@ -93,10 +92,10 @@ WaveFunctionResult SteeperSinusoidalWave(
     float steepExponent)
 {
     WaveFunctionResult results;
+    float2 randomDirection = GetRandomDirection(waveIndex, 20);
+    DirectionFunctionValues directionFunctionValues = DirectionFunction(position, randomDirection);
     
-    DirectionFunctionValues directionFunctionValues = DirectionFunction(position, direction);
-    
-
+ 
 
     float frequency = 2.0 / wavelenght;
     float phase = speed * frequency;
@@ -112,6 +111,7 @@ WaveFunctionResult SteeperSinusoidalWave(
 }
 
 WaveFunctionResult NicePeekWave(
+int waveIndex,
     float2 previousDerivatives,
     float3 position,
     float2 direction,
@@ -120,9 +120,11 @@ WaveFunctionResult NicePeekWave(
     float speed,
     float peekValue)
 {
+    
+    float2 randomDirection = GetRandomDirection(waveIndex, 20);
     WaveFunctionResult results;
     
-    DirectionFunctionValues directionFunctionValues = DirectionFunction(position, direction);
+    DirectionFunctionValues directionFunctionValues = DirectionFunction(position, randomDirection);
     
 
 
@@ -169,23 +171,26 @@ void BrownianWaveGenerator_float(
     
     WaveFunctionResult result;
     result.derivatives = float2(0, 0);
+    float2 previousDerivatives = float2(0, 0);
     
     for (int i = 0; i < waveCount; i++)
     {
        
         #if _WAVE_MODE_SINUSODIAL
-        result = SinusoidalWave(i,result.derivatives,position, direction, initialAmplitude, initialWavelenght, speed);
+        result = SinusoidalWave(i,previousDerivatives,position, direction, initialAmplitude, initialWavelenght, speed);
         
         #elif _WAVE_MODE_STEEP_SINUSODIAL
-        result = SteeperSinusoidalWave(result.derivatives,position, direction, initialAmplitude, initialWavelenght, speed,steepnessPower);
+        result = SteeperSinusoidalWave(i,previousDerivatives,position, direction, initialAmplitude, initialWavelenght, speed,steepnessPower);
         #elif _WAVE_MODE_NICE_PEEK
-        result = NicePeekWave(result.derivatives,position, direction, initialAmplitude, initialWavelenght, speed, peekValue);
+        result = NicePeekWave(i,previousDerivatives,position, direction, initialAmplitude, initialWavelenght, speed, peekValue);
         #else
-        result = SteeperSinusoidalWave(result.derivatives, position, direction, initialAmplitude, initialWavelenght, speed, steepnessPower);
+        result = SteeperSinusoidalWave(i, previousDerivatives, position, direction, initialAmplitude, initialWavelenght, speed, steepnessPower);
         #endif
         
         sumOfWaves.derivative0 += result.derivative0;
         sumOfWaves.derivatives += result.derivatives;
+        
+        previousDerivatives = sumOfWaves.derivatives;
         
         initialAmplitude *= amplitudeMultiplier;
         initialWavelenght *= waveLenghtMultiplier;
@@ -195,7 +200,7 @@ void BrownianWaveGenerator_float(
 
     PositionOut = float3(0, sumOfWaves.derivative0, 0);
     TangentOut = float3(1.0, sumOfWaves.derivatives.x, 0.0);
-    NormalOut = normalize(cross(float3(0.0, sumOfWaves.derivatives.y, 1.0), TangentOut));
+    NormalOut =  normalize(float3(-sumOfWaves.derivatives.x, 1.0, -sumOfWaves.derivatives.y));
     
     
 }
