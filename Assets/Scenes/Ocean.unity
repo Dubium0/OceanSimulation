@@ -582,13 +582,29 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
+      propertyPath: Light_
+      value: 
+      objectReference: {fileID: 718793666}
+    - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
       propertyPath: EnableWave
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
+      propertyPath: SkyboxCubemap
+      value: 
+      objectReference: {fileID: 8900000, guid: 99af420a4ccafa74abdc47436d8b0685, type: 3}
+    - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
       propertyPath: WarpingCoefficent
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
+      propertyPath: SimulationMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
+    - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
+      propertyPath: OceanMaterialPreset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ff2ca38424efbf4f90ec656c5919f06, type: 2}
     - target: {fileID: 4512991015259778527, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
       propertyPath: VertexHeightCoefficent
       value: 0.3

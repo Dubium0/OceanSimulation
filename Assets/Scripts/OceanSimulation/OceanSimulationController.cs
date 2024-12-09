@@ -9,17 +9,21 @@ namespace OceanSimulation
 
 public class OceanSimulationController : MonoBehaviour
 {
-    public Material OceanMaterial;
+    public Material SimulationMaterial;
 
     [Header("Fields")]
     public Wave WavePreset;
-
+    public OceanMaterial OceanMaterialPreset;
+    public Cubemap SkyboxCubemap;
+    public Light Light_;
     [Header("General Settings")]
     public bool EnableWave;
     public float WarpingCoefficent;
     public float VertexHeightCoefficent;
+    
 
     private ComputeBuffer waveBuffer_;
+    private ComputeBuffer materialBuffer_;
     private void OnValidate()
     {
         if (!Application.isEditor && Application.isPlaying)
@@ -40,16 +44,17 @@ public class OceanSimulationController : MonoBehaviour
     }
     private void UpdateMaterialData()
     {
-        if (OceanMaterial == null) { Debug.LogError("Ocean material is not assigned!"); return; }
+        if (SimulationMaterial == null) { Debug.LogError("Ocean material is not assigned!"); return; }
         if (WavePreset == null) { Debug.LogError("Wave preset is not assigned!"); return; }
+        if (OceanMaterialPreset == null) { Debug.LogError("Ocean Material Preset is not assigned!"); return; }
 
-        if (EnableWave)
+            if (EnableWave)
         {
-            OceanMaterial.EnableKeyword("ENABLE_WAVES");
+                SimulationMaterial.EnableKeyword("ENABLE_WAVES");
         }
         else
         {
-            OceanMaterial.DisableKeyword("ENABLE_WAVES");
+                SimulationMaterial.DisableKeyword("ENABLE_WAVES");
         }
 
         if(waveBuffer_ == null)
@@ -60,23 +65,34 @@ public class OceanSimulationController : MonoBehaviour
 
         Wave.GPUWave[] gPUWaves = { WavePreset.GetGpuWritableData() };
         waveBuffer_.SetData(gPUWaves);
-        OceanMaterial.SetBuffer("_Wave", waveBuffer_);
+            SimulationMaterial.SetBuffer("_Wave", waveBuffer_);
 
-        OceanMaterial.DisableKeyword("WAVE_MODE_SINE");
-        OceanMaterial.DisableKeyword("WAVE_MODE_GERTSNER");
+        if(materialBuffer_ == null)
+        {
+            materialBuffer_  = new ComputeBuffer(1, OceanMaterial.GetGPUOceanMaterialByteSize());
+        }
+        OceanMaterial.GPUOceanMaterial[] gPUOceanMaterials = { OceanMaterialPreset.GetGpuWritableData() };
+        materialBuffer_.SetData(gPUOceanMaterials);
+        SimulationMaterial.SetBuffer("_Material", materialBuffer_);
+
+
+        SimulationMaterial.DisableKeyword("WAVE_MODE_SINE");
+        SimulationMaterial.DisableKeyword("WAVE_MODE_GERTSNER");
         switch (WavePreset.CurrentWaveType)
         {
 
             case Wave.WaveType.Sinus:
-                OceanMaterial.EnableKeyword("WAVE_MODE_SINE");
+                    SimulationMaterial.EnableKeyword("WAVE_MODE_SINE");
             break;
             case Wave.WaveType.Gertsner:
-                OceanMaterial.EnableKeyword("WAVE_MODE_GERTSNER");
+                    SimulationMaterial.EnableKeyword("WAVE_MODE_GERTSNER");
             break;
 
         }
-        OceanMaterial.SetFloat("_WarpingCoeff",WarpingCoefficent);
-        OceanMaterial.SetFloat("_VertexHeightCoeff", VertexHeightCoefficent);
+        SimulationMaterial.SetFloat("_WarpingCoeff",WarpingCoefficent);
+        SimulationMaterial.SetFloat("_VertexHeightCoeff", VertexHeightCoefficent);
+        SimulationMaterial.SetTexture("_Skybox", SkyboxCubemap);
+        SimulationMaterial.SetVector("_SunDirection", Light_.transform.forward);
 
 
         }

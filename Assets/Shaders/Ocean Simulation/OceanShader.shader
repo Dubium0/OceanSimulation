@@ -21,7 +21,8 @@ Shader "Custom/OceanShader"
             #pragma shader_feature WAVE_MODE_GERTSNER
            
             #include "UnityCG.cginc"
-
+            #include "UnityPBSLighting.cginc"
+            #include "AutoLight.cginc"
             struct FunctionResult
             {
                 float derivative0;
@@ -39,10 +40,31 @@ Shader "Custom/OceanShader"
                 float speed;
                 float randomDirectionSeed;
             };
+            struct MaterialParams
+            {
+                float3 diffuse;
+                float3 ambient;
+                float3 specular;
+                float shininess;
+              
+                float fresnelStrength;
+                float3 fresnelColor;
+                float fresnelBias; 
+                float fresnelShininess;
+
+            };
+            //unity_AmbientSky
+
+
+            
             StructuredBuffer<Wave> _Wave;
+            StructuredBuffer<MaterialParams> _Material;
 
             float _WarpingCoeff;
             float _VertexHeightCoeff;
+            samplerCUBE _Skybox;
+            float3 _SunDirection;
+
             float Random(float2 seed)
             {
                 return frac(sin(dot(seed.xy, float2(12.9898, 78.233))) * 43758.5453123);
@@ -187,10 +209,53 @@ Shader "Custom/OceanShader"
 
             fixed4 frag (FragmentData i) : SV_Target
             {
-                // sample the texture
-                fixed4 col = fixed4(i.normal,1.0);
+                 // ambient
+                MaterialParams material = _Material[0];
+
+                float3 lightDir = -normalize(_SunDirection);
+                float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
+                float3 halfwayDir = normalize(lightDir + viewDir);
+
+                float ndotl = DotClamped(lightDir, i.normal);
+
+				float3 diffuseReflectance = material.diffuse / UNITY_PI;
+                float3 diffuse = _LightColor0.rgb * ndotl * diffuseReflectance;
+
+                // Schlick Fresnel
+				
+				float base = 1 - dot(viewDir, i.normal);
+				float exponential = pow(base, material.fresnelShininess);
+				float R = exponential + material.fresnelBias * (1.0 - exponential);
+				R *= material.fresnelStrength;
+				
+				float3 fresnel = material.fresnelColor * R;
+
+                float3 reflectedDir = reflect(-viewDir, i.normal);
+				float3 skyCol = texCUBE(_Skybox, reflectedDir).rgb;
+				float3 sun = _LightColor0.rgb * pow(max(0.0f, DotClamped(reflectedDir, lightDir)), 500.0f);
+
+				fresnel = skyCol.rgb * R;
+				fresnel += sun * R;
+
+                float3 specularReflectance = material.specular;
+				
+	
+				float spec = pow(DotClamped(i.normal, halfwayDir), material.shininess) * ndotl;
+                float3 specular = _LightColor0.rgb * specularReflectance * spec;
+
+				// Schlick Fresnel but again for specular
+				base = 1 - DotClamped(viewDir, halfwayDir);
+				exponential = pow(base, 5.0f);
+				R = exponential + material.fresnelBias * (1.0 - exponential);
+               
+				specular *= R;
+
+				float3 output = material.ambient + diffuse + specular + fresnel; //+ tipColor;
+
+                
+                fixed4 col = fixed4( diffuse ,1.0);
                 // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
+                UNITY_APPLY_FOG(output, col);
                 return col;
             }
             ENDCG
