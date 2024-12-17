@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed743d988a1b10c43a3ea55c22e2ebfc, type: 3}
-  m_Name: Sinus Wave Basic
+  m_Name: gertsner
   m_EditorClassIdentifier: 
   CurrentWaveType: 1
   OctaveCount: 100
-  Amplitude: 0.09
-  AmplitudeMultiplier: 0.607
-  WaveLength: 3.78
-  FrequencyMultiplier: 1.5
+  Amplitude: 0.01
+  AmplitudeMultiplier: 0.8
+  WaveLength: 1
+  FrequencyMultiplier: 1.2
   Speed: 1
-  RandomDirectionSeed: 24.1
+  RandomDirectionSeed: 47.4
   Warping: 1
-  MaxHeight: 0.09
+  MaxHeight: 0.1
   Steepness: 1

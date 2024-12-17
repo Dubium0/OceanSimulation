@@ -2,8 +2,9 @@ Shader "Custom/OceanShader"
 {
     Properties
     {
-        _Color ("Color", Color) = (0.0, 0.5, 0.7, 1) // Slightly blue-green for water 
-        _AmbientColor ("Ambient Color", Color) = (0.2, 0.2, 0.2, 1) // Soft gray ambient light
+        _Color ("Color", Color) = (0.0, 0.5, 0.7, 1) 
+        _AmbientColor ("Ambient Color", Color) = (0.2, 0.2, 0.2, 1) 
+         _AmbientStrength ("Ambient Strength", Range(0, 1)) = 0.5 
         _SpecularColor ("Specular Color", Color) = (1,1,1,1) 
         _Shininess ("Shininess", Range(0.03, 1)) = 0.5 
         _FresnelPower ("Fresnel Power", Range(0.1, 5)) = 2.0 
@@ -29,13 +30,8 @@ Shader "Custom/OceanShader"
            
             #include "UnityCG.cginc"
        
-            
-            struct FunctionResult
-            {
-                float derivative0;
-                float2 derivatives;
-                float2 derivatives2;
-            };
+            #define EulerNumber 2.71666666667
+           
 
             struct Wave
             {
@@ -48,6 +44,7 @@ Shader "Custom/OceanShader"
                 float randomDirectionSeed;
                 float warping;
                 float maxHeight;
+                float steepness;
             };
             
             
@@ -74,14 +71,18 @@ Shader "Custom/OceanShader"
                 return normalize(dir);
             }
 
-            
+             struct FunctionResult
+            {
+                float derivative0;
+                float2 derivatives;
+            };
 
             FunctionResult DirectionFunction(float3 position,float2 direction){
                 FunctionResult result;
                  
-                result.derivative0 = dot(direction, position.xz);
+                result.derivative0 = dot(direction, position.xz); // direction.x * position.x + direction.y *position.z
     
-                result.derivatives = float2(direction.x, direction.y);
+                result.derivatives = float2(direction.x, direction.y); // /dx =>direction.x , /dz => direction.y 
                 return result;
             
             }
@@ -99,10 +100,36 @@ Shader "Custom/OceanShader"
     
                 results.derivative0 = amplitude * sin(subFunction);
     
-                results.derivatives = amplitude * frequency * cos(subFunction) * directionFunc.derivatives;
+                results.derivatives.x = amplitude * frequency * cos(subFunction) * directionFunc.derivatives.x;
+                results.derivatives.y = amplitude * frequency * cos(subFunction) * directionFunc.derivatives.y;
+                return results;
+            }
+
+            FunctionResult NicePeekWave(
+                float3 position,
+                 FunctionResult directionFunc,
+                float amplitude,
+                float frequency,
+                float phase,
+                float steepness)
+            {
+                FunctionResult results;
+
+    
+                float subFunction = (directionFunc.derivative0 ) * frequency + _Time.y * phase;
+    
+                results.derivative0 = amplitude * pow(EulerNumber, sin(subFunction) + steepness);
+    
+                results.derivatives = frequency * cos(subFunction) * results.derivative0 * directionFunc.derivatives;
        
                 return results;
             }
+
+
+
+
+
+
 
             FunctionResult BrownianWaveGenerator(float3 position, Wave wave )
             {
@@ -117,9 +144,10 @@ Shader "Custom/OceanShader"
                 float amplitude = wave.amplitude;
                 float frequency = 2.0 * UNITY_PI  / wave.waveLength;
                 float sumOfAmplitude = 0;
+               
                 for (int i = 0; i < wave.octaveCount; i++)
                 {
-                    float2 randomDirection  = GetRandomDirection(i,wave.randomDirectionSeed);
+                     float2 randomDirection  = GetRandomDirection(i ,wave.randomDirectionSeed);
                     float phase = sqrt(wave.speed * frequency);
                     position.xz += randomDirection * -previousDerivatives.x * amplitude * wave.warping;
                    
@@ -129,7 +157,8 @@ Shader "Custom/OceanShader"
                     waveResult = SinusoidalWave(position,DirectionFunction(position,randomDirection),amplitude,frequency,phase);
                  
 
-                    #else
+                    #elif WAVE_MODE_GERTSNER
+                    waveResult = NicePeekWave(position,DirectionFunction(position,randomDirection),amplitude,frequency,phase,wave.steepness );
 
                     #endif
         
@@ -156,7 +185,7 @@ Shader "Custom/OceanShader"
 
            float3 calculateNormal(float3 position, Wave wave) {
             // Compute small offsets to estimate surface slope
-            float eps = 0.1;
+            float eps = 0.001;
             float height = BrownianWaveGenerator(position, wave).derivative0;
             float heightX = BrownianWaveGenerator(position + float3(eps, 0, 0), wave).derivative0;
             float heightZ = BrownianWaveGenerator(position + float3(0, 0, eps), wave).derivative0;
@@ -168,7 +197,9 @@ Shader "Custom/OceanShader"
             ));
     
             return normal;
-        }
+            }
+
+
 
 
             struct VertexData
@@ -202,9 +233,17 @@ Shader "Custom/OceanShader"
                 o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
                 #ifdef ENABLE_WAVES
               
+                
+
               
                 FunctionResult waveFunction = BrownianWaveGenerator(o.worldPos,_Wave[0]);
+
+
                 o.fragmentPosition = UnityObjectToClipPos(v.position + fixed4(0,waveFunction.derivative0,0,0));
+
+			  
+               
+
                 o.normal = normalize( UnityObjectToWorldNormal( calculateNormal(o.worldPos,_Wave[0]) ));
                 o.worldPos = mul(unity_ObjectToWorld, v.position + fixed4(0,waveFunction.derivative0,0,0)).xyz;
                 o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
@@ -224,6 +263,7 @@ Shader "Custom/OceanShader"
             float _FresnelPower; 
             float _WaveSpeed; 
             float4 _AmbientColor;
+            float _AmbientStrength;
 
 
             fixed4 frag (FragmentData i) : SV_Target
@@ -245,11 +285,11 @@ Shader "Custom/OceanShader"
                fixed4 reflection = texCUBE(_ReflectionCubemap, reflectDir); 
                reflection *= _ReflectionStrength; 
                // Combine the components with Fresnel effect, reflections, and ambient light 
-               fixed4 color = _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
+               fixed4 color = _AmbientStrength* _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
 
-                //color = reflection;
+             
                 // apply fog
-                UNITY_APPLY_FOG(i.fragmentPosition, color);
+                UNITY_APPLY_FOG(i.fogCoord, color);
                 return color;
             }
             ENDCG
