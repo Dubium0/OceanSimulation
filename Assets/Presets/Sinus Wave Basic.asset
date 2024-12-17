@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentWaveType: 0
   OctaveCount: 100
-  Amplitude: 0.1
-  AmplitudeMultiplier: 0.603
+  Amplitude: 0.09
+  AmplitudeMultiplier: 0.629
   WaveLength: 1
   FrequencyMultiplier: 1.2
   Speed: 1
   RandomDirectionSeed: 20.4
+  Warping: 1
+  MaxHeight: 0.1

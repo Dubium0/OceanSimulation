@@ -2,7 +2,13 @@ Shader "Custom/OceanShader"
 {
     Properties
     {
-        
+        _Color ("Color", Color) = (0.0, 0.5, 0.7, 1) // Slightly blue-green for water 
+        _AmbientColor ("Ambient Color", Color) = (0.2, 0.2, 0.2, 1) // Soft gray ambient light
+        _SpecularColor ("Specular Color", Color) = (1,1,1,1) 
+        _Shininess ("Shininess", Range(0.03, 1)) = 0.5 
+        _FresnelPower ("Fresnel Power", Range(0.1, 5)) = 2.0 
+        _ReflectionCubemap ("Reflection Cubemap", CUBE) = "" {}
+        _ReflectionStrength ("Reflection Strength", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -16,13 +22,14 @@ Shader "Custom/OceanShader"
             #pragma fragment frag
           
             #pragma multi_compile_fog
+
             #pragma shader_feature ENABLE_WAVES
             #pragma shader_feature WAVE_MODE_SINE
             #pragma shader_feature WAVE_MODE_GERTSNER
            
             #include "UnityCG.cginc"
-            #include "UnityPBSLighting.cginc"
-            #include "AutoLight.cginc"
+       
+            
             struct FunctionResult
             {
                 float derivative0;
@@ -39,31 +46,18 @@ Shader "Custom/OceanShader"
                 float frequencyMultiplier;
                 float speed;
                 float randomDirectionSeed;
+                float warping;
+                float maxHeight;
             };
-            struct MaterialParams
-            {
-                float3 diffuse;
-                float3 ambient;
-                float3 specular;
-                float shininess;
-              
-                float fresnelStrength;
-                float3 fresnelColor;
-                float fresnelBias; 
-                float fresnelShininess;
-
-            };
+            
+            
             //unity_AmbientSky
 
+            StructuredBuffer<Wave> _Wave;
+          
 
             
-            StructuredBuffer<Wave> _Wave;
-            StructuredBuffer<MaterialParams> _Material;
-
-            float _WarpingCoeff;
-            float _VertexHeightCoeff;
-            samplerCUBE _Skybox;
-            float3 _SunDirection;
+     
 
             float Random(float2 seed)
             {
@@ -93,7 +87,6 @@ Shader "Custom/OceanShader"
             }
 
             FunctionResult SinusoidalWave(
-                
                 float3 position,
                 FunctionResult directionFunc,
                 float amplitude,
@@ -109,7 +102,6 @@ Shader "Custom/OceanShader"
                 results.derivatives = amplitude * frequency * cos(subFunction) * directionFunc.derivatives;
        
                 return results;
-    
             }
 
             FunctionResult BrownianWaveGenerator(float3 position, Wave wave )
@@ -129,7 +121,7 @@ Shader "Custom/OceanShader"
                 {
                     float2 randomDirection  = GetRandomDirection(i,wave.randomDirectionSeed);
                     float phase = sqrt(wave.speed * frequency);
-                    position.xz += randomDirection * -previousDerivatives.x * amplitude *_WarpingCoeff ;
+                    position.xz += randomDirection * -previousDerivatives.x * amplitude * wave.warping;
                    
                     FunctionResult waveResult;
 
@@ -155,15 +147,28 @@ Shader "Custom/OceanShader"
     
                 sumOfWaves.derivative0 /= sumOfAmplitude;
                 sumOfWaves.derivatives /= sumOfAmplitude;
-                sumOfWaves.derivative0 *= _VertexHeightCoeff;
+                sumOfWaves.derivative0 *= wave.maxHeight;
                 return sumOfWaves;
-    
-    
+
             }
 
 
 
-           
+           float3 calculateNormal(float3 position, Wave wave) {
+            // Compute small offsets to estimate surface slope
+            float eps = 0.1;
+            float height = BrownianWaveGenerator(position, wave).derivative0;
+            float heightX = BrownianWaveGenerator(position + float3(eps, 0, 0), wave).derivative0;
+            float heightZ = BrownianWaveGenerator(position + float3(0, 0, eps), wave).derivative0;
+    
+            float3 normal = normalize(float3(
+                -(heightX - height) / eps,
+                1.0,
+                -(heightZ - height) / eps
+            ));
+    
+            return normal;
+        }
 
 
             struct VertexData
@@ -178,6 +183,7 @@ Shader "Custom/OceanShader"
                 float3 normal : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
 				float3 worldPos : TEXCOORD2;
+                float3 viewDir : TEXCOORD3;
             };
 
 
@@ -193,70 +199,58 @@ Shader "Custom/OceanShader"
                 o.fragmentPosition = UnityObjectToClipPos(v.position);
                 o.normal = normalize( UnityObjectToWorldNormal(v.normal));
                 o.worldPos = mul(unity_ObjectToWorld, v.position).xyz;
-                
+                o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
                 #ifdef ENABLE_WAVES
-
+              
+              
                 FunctionResult waveFunction = BrownianWaveGenerator(o.worldPos,_Wave[0]);
                 o.fragmentPosition = UnityObjectToClipPos(v.position + fixed4(0,waveFunction.derivative0,0,0));
-                o.normal = normalize( UnityObjectToWorldNormal( float3(-waveFunction.derivatives.x, 1.0,-waveFunction.derivatives.y)));
+                o.normal = normalize( UnityObjectToWorldNormal( cross(float3(0.0, waveFunction.derivatives.y, 1.0), float3(1.0, waveFunction.derivatives.x, 0.0))));
                 o.worldPos = mul(unity_ObjectToWorld, v.position + fixed4(0,waveFunction.derivative0,0,0)).xyz;
-                UNITY_TRANSFER_FOG(o,o.fragmentPosition);
+                o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
+              
                 #endif
-                
+                UNITY_TRANSFER_FOG(o,o.fragmentPosition);
                 
                 return o;
             }
 
+
+            samplerCUBE _ReflectionCubemap; 
+            float _ReflectionStrength; 
+            float4 _Color; 
+            float4 _SpecularColor; 
+            float _Shininess; 
+            float _FresnelPower; 
+            float _WaveSpeed; 
+            float4 _AmbientColor;
+
+
             fixed4 frag (FragmentData i) : SV_Target
             {
-                 // ambient
-                MaterialParams material = _Material[0];
-
-                float3 lightDir = -normalize(_SunDirection);
-                float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
-                float3 halfwayDir = normalize(lightDir + viewDir);
-
-                float ndotl = DotClamped(lightDir, i.normal);
-
-				float3 diffuseReflectance = material.diffuse / UNITY_PI;
-                float3 diffuse = _LightColor0.rgb * ndotl * diffuseReflectance;
-
-                // Schlick Fresnel
-				
-				float base = 1 - dot(viewDir, i.normal);
-				float exponential = pow(base, material.fresnelShininess);
-				float R = exponential + material.fresnelBias * (1.0 - exponential);
-				R *= material.fresnelStrength;
-				
-				float3 fresnel = material.fresnelColor * R;
-
-                float3 reflectedDir = reflect(-viewDir, i.normal);
-				float3 skyCol = texCUBE(_Skybox, reflectedDir).rgb;
-				float3 sun = _LightColor0.rgb * pow(max(0.0f, DotClamped(reflectedDir, lightDir)), 500.0f);
-
-				fresnel = skyCol.rgb * R;
-				fresnel += sun * R;
-
-                float3 specularReflectance = material.specular;
-				
-	
-				float spec = pow(DotClamped(i.normal, halfwayDir), material.shininess) * ndotl;
-                float3 specular = _LightColor0.rgb * specularReflectance * spec;
-
-				// Schlick Fresnel but again for specular
-				base = 1 - DotClamped(viewDir, halfwayDir);
-				exponential = pow(base, 5.0f);
-				R = exponential + material.fresnelBias * (1.0 - exponential);
                
-				specular *= R;
+             
+               float3 N = i.normal; 
+               // Calculate the light direction and half vector 
+               float3 L = normalize(_WorldSpaceLightPos0.xyz); 
+               float3 H = normalize(L + i.viewDir); 
+               // Compute the diffuse and specular components 
+               float diff = max(0, dot(N, L)); 
+               float spec = pow(max(0, dot(N, H)), _Shininess * 128.0); 
+               // Compute the Fresnel effect 
+               float3 V = normalize(i.viewDir); 
+               float fresnel = pow(1.0 - max(0, dot(N, V)), _FresnelPower); 
+               // Sample the cubemap for reflections 
+               float3 reflectDir = reflect(-V, N); 
+               fixed4 reflection = texCUBE(_ReflectionCubemap, reflectDir); 
+               reflection *= _ReflectionStrength; 
+               // Combine the components with Fresnel effect, reflections, and ambient light 
+               fixed4 color = _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
 
-				float3 output = material.ambient + diffuse + specular + fresnel; //+ tipColor;
-
-                
-                fixed4 col = fixed4( diffuse ,1.0);
+                color = reflection;
                 // apply fog
-                UNITY_APPLY_FOG(output, col);
-                return col;
+                UNITY_APPLY_FOG(output, color);
+                return color;
             }
             ENDCG
         }

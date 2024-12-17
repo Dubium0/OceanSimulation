@@ -20,11 +20,15 @@ public class Wave : ScriptableObject
         public float frequencyMultiplier;
         public float speed;
         public float randomDirectionSeed;
+        public float warping;
+        public float maxHeight;
     }
+
+
 
     public static int GetGPUWaveByteSize()
     {
-        return sizeof(float)*7;
+        return sizeof(float)*9;
     }
     public enum WaveType
     {
@@ -41,7 +45,9 @@ public class Wave : ScriptableObject
     public float FrequencyMultiplier;
     public float Speed;
     public float RandomDirectionSeed;
-    
+    public float Warping;
+    public float MaxHeight;
+
     public GPUWave GetGpuWritableData()
     {
         GPUWave gPUWave = new GPUWave();
@@ -52,6 +58,8 @@ public class Wave : ScriptableObject
         gPUWave.frequencyMultiplier = FrequencyMultiplier;
         gPUWave.speed = Speed;
         gPUWave.randomDirectionSeed = RandomDirectionSeed;
+        gPUWave.warping = Warping;
+        gPUWave.maxHeight = MaxHeight;
 
         return gPUWave;
 
