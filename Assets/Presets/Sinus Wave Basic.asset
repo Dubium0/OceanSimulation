@@ -15,10 +15,10 @@ MonoBehaviour:
   CurrentWaveType: 0
   OctaveCount: 100
   Amplitude: 0.09
-  AmplitudeMultiplier: 0.629
-  WaveLength: 1
+  AmplitudeMultiplier: 0.8
+  WaveLength: 1.21
   FrequencyMultiplier: 1.2
   Speed: 1
-  RandomDirectionSeed: 20.4
+  RandomDirectionSeed: 24.1
   Warping: 1
   MaxHeight: 0.1

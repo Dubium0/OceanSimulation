@@ -205,7 +205,7 @@ Shader "Custom/OceanShader"
               
                 FunctionResult waveFunction = BrownianWaveGenerator(o.worldPos,_Wave[0]);
                 o.fragmentPosition = UnityObjectToClipPos(v.position + fixed4(0,waveFunction.derivative0,0,0));
-                o.normal = normalize( UnityObjectToWorldNormal( cross(float3(0.0, waveFunction.derivatives.y, 1.0), float3(1.0, waveFunction.derivatives.x, 0.0))));
+                o.normal = normalize( UnityObjectToWorldNormal( calculateNormal(o.worldPos,_Wave[0]) ));
                 o.worldPos = mul(unity_ObjectToWorld, v.position + fixed4(0,waveFunction.derivative0,0,0)).xyz;
                 o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
               
@@ -247,9 +247,9 @@ Shader "Custom/OceanShader"
                // Combine the components with Fresnel effect, reflections, and ambient light 
                fixed4 color = _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
 
-                color = reflection;
+                //color = reflection;
                 // apply fog
-                UNITY_APPLY_FOG(output, color);
+                UNITY_APPLY_FOG(i.fragmentPosition, color);
                 return color;
             }
             ENDCG
