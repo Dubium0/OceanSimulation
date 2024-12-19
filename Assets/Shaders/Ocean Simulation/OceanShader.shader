@@ -68,6 +68,10 @@ Shader "Custom/OceanShader"
                 dir.x = 2* frac(Random(float2(index, seed))) - 1;
                 dir.y = 2* frac(Random(float2(index, seed + 1))) - 1;
 
+                //dir.x = clamp(dir.x,-1,1);
+                //dir.y = clamp(dir.x,-1,1);
+                
+                
                 return normalize(dir);
             }
 
@@ -177,19 +181,23 @@ Shader "Custom/OceanShader"
                 sumOfWaves.derivative0 /= sumOfAmplitude;
                 sumOfWaves.derivatives /= sumOfAmplitude;
                 sumOfWaves.derivative0 *= wave.maxHeight;
+
+                #ifdef WAVE_MODE_GERTSNER
+                sumOfWaves.derivative0 -= 1;
+                #endif
                 return sumOfWaves;
 
             }
 
 
 
-           float3 calculateNormal(float3 position, Wave wave) {
+            float3 calculateNormal(float3 position, Wave wave) {
             // Compute small offsets to estimate surface slope
             float eps = 0.001;
             float height = BrownianWaveGenerator(position, wave).derivative0;
             float heightX = BrownianWaveGenerator(position + float3(eps, 0, 0), wave).derivative0;
             float heightZ = BrownianWaveGenerator(position + float3(0, 0, eps), wave).derivative0;
-    
+            
             float3 normal = normalize(float3(
                 -(heightX - height) / eps,
                 1.0,
@@ -225,26 +233,22 @@ Shader "Custom/OceanShader"
 
 
 
-
-
                 o.fragmentPosition = UnityObjectToClipPos(v.position);
                 o.normal = normalize( UnityObjectToWorldNormal(v.normal));
                 o.worldPos = mul(unity_ObjectToWorld, v.position).xyz;
                 o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
                 #ifdef ENABLE_WAVES
-              
-                
-
-              
+   
                 FunctionResult waveFunction = BrownianWaveGenerator(o.worldPos,_Wave[0]);
 
 
                 o.fragmentPosition = UnityObjectToClipPos(v.position + fixed4(0,waveFunction.derivative0,0,0));
 
 			  
-               
-
-                o.normal = normalize( UnityObjectToWorldNormal( calculateNormal(o.worldPos,_Wave[0]) ));
+              
+                float3 tangent = float3(1.0, waveFunction.derivatives.x, 0.0);
+                float3 normal = cross(float3(0.0, waveFunction.derivatives.y, 1.0), tangent);
+                o.normal = normalize( UnityObjectToWorldNormal(calculateNormal(o.worldPos,_Wave[0]) ));
                 o.worldPos = mul(unity_ObjectToWorld, v.position + fixed4(0,waveFunction.derivative0,0,0)).xyz;
                 o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
               
@@ -291,6 +295,8 @@ Shader "Custom/OceanShader"
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, color);
                 return color;
+
+                //return fixed4(i.normal,1.0);
             }
             ENDCG
         }

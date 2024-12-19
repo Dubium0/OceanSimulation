@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed743d988a1b10c43a3ea55c22e2ebfc, type: 3}
-  m_Name: Sinus Wave experiment
+  m_Name: Sinus Wave Harsh
   m_EditorClassIdentifier: 
   CurrentWaveType: 0
   OctaveCount: 100
-  Amplitude: 0.01
-  AmplitudeMultiplier: 0.8
-  WaveLength: 1
-  FrequencyMultiplier: 1.3
+  Amplitude: 0.1
+  AmplitudeMultiplier: 0.748
+  WaveLength: 1.85
+  FrequencyMultiplier: 1.2
   Speed: 1
-  RandomDirectionSeed: 2.87
+  RandomDirectionSeed: 31.7
   Warping: 1
-  MaxHeight: 0.05
+  MaxHeight: 0.22
+  Steepness: 0.96

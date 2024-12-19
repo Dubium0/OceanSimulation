@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 194092493193722631}
   - component: {fileID: 3871080100479998099}
   - component: {fileID: 6953023478984621192}
-  - component: {fileID: 11613367730878429}
   - component: {fileID: 4512991015259778527}
   m_Layer: 0
   m_Name: Ocean
@@ -101,23 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d091e2311062670408f93c8b2d60a86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 200
+  resolution: 134
   meshType: 1
---- !u!114 &11613367730878429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2463100831961020848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c1014fe7f95d6949afb5a927a315ef1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GridTilePrefab: {fileID: 2463100831961020848, guid: aebec4aad4b2f7941bef6ba361abaa6a, type: 3}
-  DimensionX: 1
-  DimensionZ: 1
 --- !u!114 &4512991015259778527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd8dca3150e7f34dad8439e7f570765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OceanMaterial: {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
+  SimulationMaterial: {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
   WavePreset: {fileID: 11400000, guid: 771fc3d81433b1e4d89707f9de22aa43, type: 2}
-  EnableWave: 0
+  EnableWave: 1
