@@ -15,8 +15,8 @@ MonoBehaviour:
   CurrentWaveType: 1
   OctaveCount: 100
   Amplitude: 0.37
-  AmplitudeMultiplier: 0.735
-  WaveLength: 4.41
+  AmplitudeMultiplier: 0.755
+  WaveLength: 4.74
   FrequencyMultiplier: 1.21
   Speed: 1
   RandomDirectionSeed: 8.9
