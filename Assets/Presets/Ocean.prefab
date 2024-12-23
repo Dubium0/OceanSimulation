@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d091e2311062670408f93c8b2d60a86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 134
+  resolution: 78
   meshType: 1
 --- !u!114 &4512991015259778527
 MonoBehaviour:
@@ -115,5 +115,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SimulationMaterial: {fileID: 2100000, guid: 3a6ef091e7e0c2c4bafb8edce90af2d3, type: 2}
-  WavePreset: {fileID: 11400000, guid: 771fc3d81433b1e4d89707f9de22aa43, type: 2}
+  WavePreset: {fileID: 11400000, guid: 79bd1cc2ffe7e154099972a63c673ca4, type: 2}
   EnableWave: 1

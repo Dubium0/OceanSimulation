@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed743d988a1b10c43a3ea55c22e2ebfc, type: 3}
-  m_Name: Sinus Wave calm
+  m_Name: gertsner harsh
   m_EditorClassIdentifier: 
-  CurrentWaveType: 0
+  CurrentWaveType: 1
   OctaveCount: 100
-  Amplitude: 0.01
-  AmplitudeMultiplier: 0.669
-  WaveLength: 0.74
-  FrequencyMultiplier: 1.28
-  Speed: 0.11
-  RandomDirectionSeed: 4.39
-  Warping: 1
-  MaxHeight: 0.04
-  Steepness: 1.36
+  Amplitude: 0.37
+  AmplitudeMultiplier: 0.755
+  WaveLength: 4.74
+  FrequencyMultiplier: 1.21
+  Speed: 1
+  RandomDirectionSeed: 8.9
+  Warping: 0.02
+  MaxHeight: 0.07
+  Steepness: 1.94
