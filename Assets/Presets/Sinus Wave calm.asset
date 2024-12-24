@@ -19,7 +19,7 @@ MonoBehaviour:
   WaveLength: 0.74
   FrequencyMultiplier: 1.28
   Speed: 0.11
-  RandomDirectionSeed: 4.39
+  RandomDirectionSeed: 5.58
   Warping: 1
   MaxHeight: 0.04
   Steepness: 1.36

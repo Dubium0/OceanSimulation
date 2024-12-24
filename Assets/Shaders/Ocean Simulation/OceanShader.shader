@@ -134,9 +134,9 @@ Shader "Custom/OceanShader"
 
             FunctionResult BrownianWaveGenerator(float3 position, Wave wave )
             {
-                if (wave.octaveCount > 100)
+                if (wave.octaveCount > 200)
                 {
-                    wave.octaveCount = 100; // I dont wanna crash accidently
+                    wave.octaveCount = 200; // I dont wanna crash accidently
                 }
     
                 FunctionResult sumOfWaves;
