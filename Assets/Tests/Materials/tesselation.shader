@@ -1,8 +1,8 @@
-Shader "Custom/OceanShader"
+Shader "Custom/TessellationShader"
 {
     Properties
     {
-        _Color ("Color", Color) = (0.0, 0.5, 0.7, 1) 
+         _Color ("Color", Color) = (0.0, 0.5, 0.7, 1) 
         _AmbientColor ("Ambient Color", Color) = (0.2, 0.2, 0.2, 1) 
          _AmbientStrength ("Ambient Strength", Range(0, 1)) = 0.5 
         _SpecularColor ("Specular Color", Color) = (1,1,1,1) 
@@ -13,26 +13,128 @@ Shader "Custom/OceanShader"
       
         _TipColor ("Tip Color", Color) = (1.0, 1.0, 0.2, 1) 
          _TipAttenuation ("Tip Attenuation", Range(0.0, 128)) = 0.5 
+
+
+
+
+        _DummyCameraPos("Dummy Camera Position", Vector) = (0, 0, 0, 0)
+        [Enum(Off, 0, On, 1)] _ZWrite ("Z Write", Float) = 1
     }
+
+    CGINCLUDE
+        #define _TessellationEdgeLength 20
+        float3 _DummyCameraPos;
+        struct TessellationFactors {
+            float edge[3] : SV_TESSFACTOR;
+            float inside : SV_INSIDETESSFACTOR;
+        };
+
+        float TessellationHeuristic(float3 cp0, float3 cp1) {
+            float edgeLength = distance(cp0, cp1);
+            float3 edgeCenter = (cp0 + cp1) * 0.5;
+            float viewDistance = distance(edgeCenter, _DummyCameraPos);
+
+            return edgeLength * _ScreenParams.y / (_TessellationEdgeLength * (pow(viewDistance * 0.5f, 1.2f)));
+        }
+
+        bool TriangleIsBelowClipPlane(float3 p0, float3 p1, float3 p2, int planeIndex, float bias) {
+            float4 plane = unity_CameraWorldClipPlanes[planeIndex];
+
+            return dot(float4(p0, 1), plane) < bias && dot(float4(p1, 1), plane) < bias && dot(float4(p2, 1), plane) < bias;
+        }
+
+        bool cullTriangle(float3 p0, float3 p1, float3 p2, float bias) {
+            return TriangleIsBelowClipPlane(p0, p1, p2, 0, bias) ||
+                   TriangleIsBelowClipPlane(p0, p1, p2, 1, bias) ||
+                   TriangleIsBelowClipPlane(p0, p1, p2, 2, bias) ||
+                   TriangleIsBelowClipPlane(p0, p1, p2, 3, bias);
+        }
+    ENDCG
+
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Tags { "RenderType"="Transparent" }
+        LOD 400
 
         Pass
         {
             CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-          
+            #pragma vertex dummyvp
+            #pragma hull hp
+            #pragma domain dp
+            #pragma geometry gp
+            #pragma fragment fp
+
+            #pragma target 5.0
             #pragma multi_compile_fog
 
             #pragma shader_feature ENABLE_WAVES
             #pragma shader_feature WAVE_MODE_SINE
             #pragma shader_feature WAVE_MODE_GERTSNER
-           
             #include "UnityCG.cginc"
-       
+
+            float _TessellationFactor;
+          
+            struct TessellationControlPoint {
+                float4 vertex : INTERNALTESSPOS;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct VertexData {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2g {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 worldPos : TEXCOORD1;
+                float depth : TEXCOORD2;
+                float height : TEXCOORD3;
+                UNITY_FOG_COORDS(4)
+            };
+
+            struct g2f {
+                v2g data;
+                float2 barycentricCoordinates : TEXCOORD9;
+            };
+
+            TessellationControlPoint dummyvp(VertexData v) {
+                TessellationControlPoint p;
+                p.vertex = v.vertex;
+                p.uv = v.uv;
+                return p;
+            }
+
+            TessellationFactors PatchFunction(InputPatch<TessellationControlPoint, 3> patch) {
+                float3 p0 = mul(unity_ObjectToWorld, patch[0].vertex).xyz;
+                float3 p1 = mul(unity_ObjectToWorld, patch[1].vertex).xyz;
+                float3 p2 = mul(unity_ObjectToWorld, patch[2].vertex).xyz;
+
+                TessellationFactors f;
+                float bias = -0.5 * 100;
+                if (cullTriangle(p0, p1, p2, bias)) {
+                    f.edge[0] = f.edge[1] = f.edge[2] = f.inside = 0;
+                } else {
+                     f.edge[0] = TessellationHeuristic(p1, p2);
+                    f.edge[1] = TessellationHeuristic(p2, p0);
+                    f.edge[2] = TessellationHeuristic(p0, p1);
+                    f.inside = (TessellationHeuristic(p1, p2) +
+                                TessellationHeuristic(p2, p0) +
+                                TessellationHeuristic(p1, p2)) * (1 / 3.0);
+                }
+                return f;
+            }
+
+            [UNITY_domain("tri")]
+            [UNITY_outputcontrolpoints(3)]
+            [UNITY_outputtopology("triangle_cw")]
+            [UNITY_partitioning("integer")]
+            [UNITY_patchconstantfunc("PatchFunction")]
+            TessellationControlPoint hp(InputPatch<TessellationControlPoint, 3> patch, uint id : SV_OUTPUTCONTROLPOINTID) {
+                return patch[id];
+            }
+
             #define EulerNumber 2.71666666667
            
 
@@ -50,16 +152,8 @@ Shader "Custom/OceanShader"
                 float steepness;
             };
             
-            
-            //unity_AmbientSky
-
-            StructuredBuffer<Wave> _Wave;
-          
-
-            
-     
-
-            float Random(float2 seed)
+             StructuredBuffer<Wave> _Wave;
+             float Random(float2 seed)
             {
                 return frac(sin(dot(seed.xy, float2(12.9898, 78.233))) * 43758.5453123);
             }
@@ -183,7 +277,7 @@ Shader "Custom/OceanShader"
                 sumOfWaves.derivative0 *= wave.maxHeight;
 
                 #ifdef WAVE_MODE_GERTSNER
-                sumOfWaves.derivative0 -=2.5;
+                sumOfWaves.derivative0 -= 2 ;
                 #endif
                 return sumOfWaves;
 
@@ -208,55 +302,69 @@ Shader "Custom/OceanShader"
             }
 
 
-            struct VertexData
-            {
-                float4 position : POSITION;
-                float3 normal : NORMAL;
-               
-            };
-
-            struct FragmentData
-            {
-                float4 fragmentPosition : SV_POSITION;
-                float3 normal : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-				float3 worldPos : TEXCOORD2;
-                float3 viewDir : TEXCOORD3;
-                float height : TEXCOORD4;
-            };
+            v2g vp(VertexData v) {
+                v2g g;
+                v.uv = 0;
+                g.worldPos = mul(unity_ObjectToWorld, v.vertex);
 
 
-
-            FragmentData vert (VertexData v)
-            {
-                FragmentData o;
-
-                o.fragmentPosition = UnityObjectToClipPos(v.position);
-                o.normal = normalize( UnityObjectToWorldNormal(v.normal));
-                o.worldPos = mul(unity_ObjectToWorld, v.position).xyz;
-                o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
 
                 #ifdef ENABLE_WAVES
    
-                FunctionResult waveFunction = BrownianWaveGenerator(o.worldPos,_Wave[0]);
+                FunctionResult waveFunction = BrownianWaveGenerator(g.worldPos,_Wave[0]);
 
-                o.fragmentPosition = UnityObjectToClipPos(v.position + fixed4(0,waveFunction.derivative0,0,0));
-                o.height = waveFunction.derivative0;
-                //float3 tangent = float3(1.0, waveFunction.derivatives.x, 0.0);
-                //float3 normal = cross(float3(0.0, waveFunction.derivatives.y, 1.0), tangent);
-                //o.normal = normalize( UnityObjectToWorldNormal(calculateNormal(o.worldPos,_Wave[0]) ));
-                o.normal = 0.0;
-                o.worldPos = mul(unity_ObjectToWorld, v.position + fixed4(0,waveFunction.derivative0,0,0)).xyz;
-                o.viewDir = normalize(_WorldSpaceCameraPos -  o.worldPos);
-              
+                v.vertex += fixed4(0,waveFunction.derivative0,0,0);
+                g.height = waveFunction.derivative0;
                 #endif
 
-                UNITY_TRANSFER_FOG(o,o.fragmentPosition);
-                
-                return o;
+
+
+
+
+
+
+
+                float4 clipPos = UnityObjectToClipPos(v.vertex);
+                float depth = 1 - Linear01Depth(clipPos.z / clipPos.w);
+
+                g.pos = UnityObjectToClipPos(v.vertex);
+                g.uv = g.worldPos.xz;
+                g.worldPos = mul(unity_ObjectToWorld, v.vertex);
+                g.depth = depth;
+
+                UNITY_TRANSFER_FOG(g,g.pos);
+                return g;
             }
 
+            #define DP_INTERPOLATE(fieldName) data.fieldName = \
+                data.fieldName = patch[0].fieldName * barycentricCoordinates.x + \
+                                 patch[1].fieldName * barycentricCoordinates.y + \
+                                 patch[2].fieldName * barycentricCoordinates.z;
 
+            [UNITY_domain("tri")]
+            v2g dp(TessellationFactors factors, OutputPatch<TessellationControlPoint, 3> patch, float3 barycentricCoordinates : SV_DOMAINLOCATION) {
+                VertexData data;
+                DP_INTERPOLATE(vertex)
+                DP_INTERPOLATE(uv)
+
+                return vp(data);
+            }
+
+            [maxvertexcount(3)]
+            void gp(triangle v2g g[3], inout TriangleStream<g2f> stream) {
+                g2f g0, g1, g2;
+                g0.data = g[0];
+                g1.data = g[1];
+                g2.data = g[2];
+
+                g0.barycentricCoordinates = float2(1, 0);
+                g1.barycentricCoordinates = float2(0, 1);
+                g2.barycentricCoordinates = float2(0, 0);
+
+                stream.Append(g0);
+                stream.Append(g1);
+                stream.Append(g2);
+            }
             samplerCUBE _ReflectionCubemap; 
             float _ReflectionStrength; 
             float4 _Color; 
@@ -270,20 +378,35 @@ Shader "Custom/OceanShader"
             float _TipAttenuation;
 
 
-            fixed4 frag (FragmentData i) : SV_Target
-            {
-               
-               i.normal =calculateNormal(i.worldPos,_Wave[0]);
-             
-               float3 N = i.normal; 
+            float4 fp(g2f f) : SV_TARGET {
+
+
+                /*
+                 struct g2f {
+                v2g data;
+                float2 barycentricCoordinates : TEXCOORD9;
+            };
+                struct v2g {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float3 worldPos : TEXCOORD1;
+                float depth : TEXCOORD2;
+                float height : TEXCOORD3;
+                UNITY_FOG_COORDS(4)
+            };
+                */
+                float3 normal = calculateNormal(f.data.worldPos,_Wave[0]);
+
+                float3 viewDir = normalize(_WorldSpaceCameraPos - f.data.worldPos );
+                float3 N = normal; 
                // Calculate the light direction and half vector 
                float3 L = normalize(_WorldSpaceLightPos0.xyz); 
-               float3 H = normalize(L + i.viewDir); 
+               float3 H = normalize(L + viewDir); 
                // Compute the diffuse and specular components 
                float diff = max(0, dot(N, L)); 
                float spec = pow(max(0, dot(N, H)), _Shininess * 128.0); 
                // Compute the Fresnel effect 
-               float3 V = normalize(i.viewDir); 
+               float3 V = normalize(viewDir); 
                float fresnel = pow(1.0 - max(0, dot(N, V)), _FresnelPower); 
                // Sample the cubemap for reflections 
                float3 reflectDir = reflect(-V, N); 
@@ -292,19 +415,19 @@ Shader "Custom/OceanShader"
                // Combine the components with Fresnel effect, reflections, and ambient light
 
                
-              // float4 tipColor = _TipColor * pow( saturate( i.height*2 +1), _TipAttenuation);
+              // float4 tipColor = _TipColor * pow( saturate( f.data.height*2 +1), _TipAttenuation);
 
-               fixed4 color =  _AmbientStrength* _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
+               fixed4 color =_AmbientStrength* _AmbientColor + _Color * diff + _SpecularColor * spec * fresnel + reflection * fresnel;
 
              
                 // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, color);
+                UNITY_APPLY_FOG(f.data.fogCoord, color);
                 return color;
-
-                //return fixed4(i.normal,1.0);
-               // return fixed4( pow( saturate( i.height*2 +1), _TipAttenuation),0.0,0.0,1.0);
             }
+
             ENDCG
         }
     }
+    FallBack "Diffuse"
 }
+

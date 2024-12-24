@@ -17,6 +17,12 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float rotationSpeed;
 
+    [SerializeField]
+    private Material cameraPosRequiredMaterial;
+    [SerializeField]
+    private bool useMaterialUpdate = false;
+
+
     private bool movementEnabled  { get {return rightClickAction_.IsPressed();} }
     private void Awake()
     {
@@ -31,10 +37,15 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         Move();
+        if (useMaterialUpdate)
+        {
+            UpdateMaterial();
+        }
 
-        
-        
+
+
     }
+
     private void Move()
     {
         if (movementEnabled)
@@ -52,7 +63,15 @@ public class CameraController : MonoBehaviour
             transform.rotation = Quaternion.Euler(transform.eulerAngles + offSetRotation);
         }
     }
+    private void UpdateMaterial()
+    {
+        if (cameraPosRequiredMaterial != null)
+        {
+            
+         cameraPosRequiredMaterial.SetVector("_DummyCameraPos", transform.position);
+        }
+    }
 
-    
+
 
 }

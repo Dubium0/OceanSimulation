@@ -13,6 +13,8 @@ public class MultipleGrid : MonoBehaviour
     public int DimensionX = 1;
     [Range(1, 20)]
     public int DimensionZ= 1;
+    [SerializeField]
+    private float stepSize = 1;
     private bool awakeCheck = false;
 
     private void OnValidate()
@@ -63,7 +65,7 @@ public class MultipleGrid : MonoBehaviour
         {
             for (int y = 0; y < DimensionZ; y++)
             {
-                Instantiate(GridTilePrefab,new Vector3(x, 0, y) * transform.localScale.x, Quaternion.identity,transform);
+                Instantiate(GridTilePrefab,new Vector3(x, 0, y) * transform.localScale.x * stepSize, Quaternion.identity,transform);
 
             }
         }

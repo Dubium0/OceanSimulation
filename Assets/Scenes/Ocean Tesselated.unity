@@ -266,7 +266,7 @@ Transform:
   m_GameObject: {fileID: 924714636}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.053968, y: -1.4885925, z: -4.9253755}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -284,10 +284,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c1014fe7f95d6949afb5a927a315ef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridTilePrefab: {fileID: 2463100831961020848, guid: 57f03522a6ad2a748885cdd91f9c783e, type: 3}
+  GridTilePrefab: {fileID: 5852874797460054125, guid: 404569880a080444fa418d21217a2678, type: 3}
   DimensionX: 20
   DimensionZ: 20
-  stepSize: 1
+  stepSize: 5
 --- !u!1001 &1409470277
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -298,7 +298,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3184510383737289768, guid: 45e0dfba8fcc07d4d8daf04f01221203, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.3486247
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3184510383737289768, guid: 45e0dfba8fcc07d4d8daf04f01221203, type: 3}
       propertyPath: m_LocalPosition.y
@@ -340,6 +340,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: MovableCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 8124225071799313720, guid: 45e0dfba8fcc07d4d8daf04f01221203, type: 3}
+      propertyPath: useMaterialUpdate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8124225071799313720, guid: 45e0dfba8fcc07d4d8daf04f01221203, type: 3}
+      propertyPath: cameraPosRequiredMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 8e3903b506dbd264683202fcd54d2000, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

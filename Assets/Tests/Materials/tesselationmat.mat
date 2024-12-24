@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6774844818415162516
+--- !u!114 &-8856911662267197650
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ocean
-  m_Shader: {fileID: 4800000, guid: ac80a890a44ed804ea4da1624ee47d60, type: 3}
+  m_Name: tesselationmat
+  m_Shader: {fileID: 4800000, guid: 2716f651ce0b39644bf27f9474941ce3, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -35,7 +35,7 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: _DummyCameraPos
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -59,16 +59,24 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DispTex:
+        m_Texture: {fileID: 2800000, guid: 612551dff7419e0429d404f2380457ed, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 612551dff7419e0429d404f2380457ed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 612551dff7419e0429d404f2380457ed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -82,7 +90,7 @@ Material:
     - _ReflectionCubemap:
         m_Texture: {fileID: 8900000, guid: 90196f2c2d8d2f2448717676e1a09894, type: 3}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Offset: {x: -1.95, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -114,13 +122,11 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Displacement: 0
+    - _DisplacementAmount: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FoamNoiseScale: 10
-    - _FoamSpeed: 10
-    - _FoamThreshold: 1
-    - _FoamWidth: 10
     - _FresnelPower: 3.23
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -138,17 +144,19 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _TipAttenuation: 4
+    - _Tess: 1
+    - _TessellationFactor: 1
+    - _TipAttenuation: 38
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _AmbientColor: {r: 0.09011214, g: 0.10018999, b: 0.254717, a: 1}
+    - _AmbientColor: {r: 0.09019608, g: 0.101960786, b: 0.25490198, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.24313726, g: 0.24705882, b: 0.21568628, a: 1}
+    - _DummyCameraPos: {r: 49.998928, g: 1.1223233, b: -0.8029, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SpecularColor: {r: 0.14827341, g: 0.6415094, b: 0.6240717, a: 1}
-    - _TipColor: {r: 0.20616768, g: 0.35398832, b: 0.38679248, a: 1}
+    - _SpecularColor: {r: 0.15895337, g: 0.7169812, b: 0.69725287, a: 1}
+    - _TipColor: {r: 0.20784314, g: 0.3529412, b: 0.3882353, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
