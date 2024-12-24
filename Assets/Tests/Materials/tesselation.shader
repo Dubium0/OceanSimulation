@@ -319,11 +319,6 @@ Shader "Custom/TessellationShader"
 
 
 
-
-
-
-
-
                 float4 clipPos = UnityObjectToClipPos(v.vertex);
                 float depth = 1 - Linear01Depth(clipPos.z / clipPos.w);
 

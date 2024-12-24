@@ -123,5 +123,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SimulationMaterial: {fileID: 2100000, guid: 8e3903b506dbd264683202fcd54d2000, type: 2}
-  WavePreset: {fileID: 11400000, guid: b5087f7de6b23b743a8cbc7bc4104b78, type: 2}
+  WavePreset: {fileID: 11400000, guid: 75ba502525ead8542b404100407df22c, type: 2}
   EnableWave: 1

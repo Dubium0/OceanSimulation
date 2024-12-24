@@ -123,7 +123,7 @@ Shader "Custom/OceanShader"
                 FunctionResult results;
 
     
-                float subFunction = (directionFunc.derivative0 ) * frequency + _Time.y * phase;
+                float subFunction = ( directionFunc.derivative0 ) * frequency + _Time.y * phase;
     
                 results.derivative0 = amplitude * pow(EulerNumber, sin(subFunction) + steepness);
     
