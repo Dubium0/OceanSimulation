@@ -11,8 +11,6 @@ The simulation draws inspiration from established methods in computer graphics, 
 
 
 ## How to Use / Setup
-
-*(Add instructions here if you want others to be able to run your project, e.g.:)*
 1.  Clone this repository.
 2.  Open the project in Unity (specify version, e.g., Unity 202X.X.Xf1).
 3.  Open the main scene (e.g., `OceanScene.unity`).
