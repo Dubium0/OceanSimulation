@@ -1,7 +1,7 @@
 # Real-Time Ocean Simulation in Unity
 
-![Ocean Simulation Preview](images/gertsner100_150.png)
-*(You can replace this with a more general or appealing GIF/image of your simulation)*
+![Ocean Simulation Preview](resources/damn.gif)
+
 
 ## Project Overview
 
