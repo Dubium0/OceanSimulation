@@ -1,6 +1,6 @@
-using System.Runtime.InteropServices.WindowsRuntime;
+
 using UnityEngine;
-using UnityEngine.Animations;
+
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Camera))]

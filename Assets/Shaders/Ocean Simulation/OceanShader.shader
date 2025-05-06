@@ -183,7 +183,7 @@ Shader "Custom/OceanShader"
                 sumOfWaves.derivative0 *= wave.maxHeight;
 
                 #ifdef WAVE_MODE_GERTSNER
-                sumOfWaves.derivative0 -=2.5;
+                sumOfWaves.derivative0 -=0.25;
                 #endif
                 return sumOfWaves;
 

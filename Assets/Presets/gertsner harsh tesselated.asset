@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: gertsner harsh tesselated
   m_EditorClassIdentifier: 
   CurrentWaveType: 1
-  OctaveCount: 100
+  OctaveCount: 80
   Amplitude: 0.48
   AmplitudeMultiplier: 0.781
   WaveLength: 12.14

@@ -21,5 +21,5 @@ MonoBehaviour:
   Speed: 0.11
   RandomDirectionSeed: 5.58
   Warping: 1
-  MaxHeight: 0.04
+  MaxHeight: 0.06
   Steepness: 1.36
