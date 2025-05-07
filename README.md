@@ -5,7 +5,7 @@
 
 ## Project Overview
 
-This project, developed as part of CS350 (Operating Systems) / CS426 (Term Project) for Spring 2024, explores and implements techniques for realistic real-time ocean surface simulation within the Unity engine. The goal is to render a visually convincing and performant ocean by leveraging procedural mesh generation, shader-based wave functions, and dynamic tessellation.
+This project, developed as CS426 ( Game Development Course ) Term Project for Spring 2024, explores and implements techniques for realistic real-time ocean surface simulation within the Unity engine. The goal is to render a visually convincing and performant ocean by leveraging procedural mesh generation, shader-based wave functions, and dynamic tessellation.
 
 The simulation draws inspiration from established methods in computer graphics, including concepts from Nvidia's GPU Gems, Tessendorf's FFT-based ocean water, and procedural noise techniques for wave generation.
 
